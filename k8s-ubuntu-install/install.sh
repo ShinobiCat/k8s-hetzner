@@ -69,13 +69,13 @@ EOF
 ##############################
 echo '> Set up stable Docker repository ...'
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 ####################################
 ## Add Docker’s official GPG key: ##
 ####################################
-sudo test -e /usr/share/keyrings/docker-archive-keyring.gpg || curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+sudo test -e /etc/apt/keyrings/docker-archive-keyring.gpg || curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg
 ################################
 # Update the apt package index #
 ################################
@@ -115,12 +115,12 @@ EOF
 ###################################################
 ## Download the Google Cloud public signing key: ##
 ###################################################
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+sudo curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
 
 ########################################
 ## Add the Kubernetes apt repository: ##
 ########################################
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 ############################################################################################
 ## Update apt package index, install kubelet, kubeadm and kubectl, and pin their version: ##
@@ -133,3 +133,9 @@ sudo apt-mark -o DPkg::Lock::Timeout=${DPKG_LOCK_TIMOUT} hold kubelet kubeadm ku
 ## Enable Kubelet ##
 ####################
 sudo systemctl enable --now kubelet
+
+#############################
+## Install bash completion ##
+#############################
+echo '> Install bash completion...'
+sudo apt-get -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' -o DPkg::Lock::Timeout=${DPKG_LOCK_TIMOUT} install -y bash-completion
