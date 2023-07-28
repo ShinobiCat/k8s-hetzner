@@ -137,13 +137,11 @@ sudo systemctl enable --now kubelet
 #############################
 ## Install bash completion ##
 #############################
-echo '> Install bash completion...'
 sudo apt-get -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' -o DPkg::Lock::Timeout=${DPKG_LOCK_TIMOUT} install -y bash-completion
 
 ##################
 ## Install helm ##
 ##################
-echo '> Install helm...'
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/helm.gpg > /dev/null
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt-get update
